@@ -4,66 +4,75 @@ public class PlayerController : MonoBehaviour
 {
     [Header("Movement Settings")]
     public float moveSpeed = 5f;
-    public float jumpForce = 5f; // Optional if you want jumping + gravity flip
-
-    [Header("Components")]
-    public Rigidbody2D rb;
+    public float jumpForce = 8f; 
+    public int maxJumps = 2; 
+    private int jumpCount;   
+    private Rigidbody2D rb;
     private bool isGrounded;
-    private bool isGravityFlipped = false;
+    private Vector3 respawnPosition;
 
     void Start()
     {
-        // Automatically find the Rigidbody on this object
         rb = GetComponent<Rigidbody2D>();
+        respawnPosition = transform.position;
+        jumpCount = 0;
     }
 
     void Update()
     {
-        // 1. Horizontal Movement
         float moveInput = Input.GetAxisRaw("Horizontal");
         rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
 
-        // 2. NORMAL JUMP (Press W or Up Arrow) - If you want a standard jump
-        if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow)) && isGrounded)
+        if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
         {
-            // If gravity is normal (1), jump up. If flipped (-1), jump down.
-            float direction = rb.gravityScale > 0 ? 1 : -1; 
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce * direction);
+            if (jumpCount < maxJumps)
+            {
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0);
+                float direction = Mathf.Sign(rb.gravityScale); 
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce * direction);
+                jumpCount++;
+            }
         }
 
-        // 3. GRAVITY FLIP (Press Space)
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        if (Input.GetKeyDown(KeyCode.LeftShift) && isGrounded)
         {
-            FlipGravity();
+            rb.gravityScale *= -1;
+            Vector3 newScale = transform.localScale;
+            newScale.y *= -1;
+            transform.localScale = newScale;
+            jumpCount = 0;
         }
     }
 
-    void FlipGravity()
+    public void SetCheckpoint(Vector3 newPosition)
     {
-        // Invert the gravity scale (1 becomes -1, -1 becomes 1)
-        rb.gravityScale *= -1;
-
-        // Rotate the player sprite vertically so feet point to the new "down"
-        transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y * -1, transform.localScale.z);
-        
-        // Toggle our flag
-        isGravityFlipped = !isGravityFlipped;
+        respawnPosition = newPosition;
     }
 
-    // Check if we are touching the ground
+    public void Respawn()
+    {
+        transform.position = respawnPosition;
+        rb.linearVelocity = Vector2.zero;
+        if (rb.gravityScale < 0)
+        {
+            rb.gravityScale *= -1;
+            Vector3 newScale = transform.localScale;
+            newScale.y *= -1;
+            transform.localScale = newScale;
+        }
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = true;
+            jumpCount = 0;
         }
     }
-
+    
     private void OnCollisionExit2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Ground"))
-        {
-            isGrounded = false;
-        }
+        if (collision.gameObject.CompareTag("Ground")) isGrounded = false;
     }
 }

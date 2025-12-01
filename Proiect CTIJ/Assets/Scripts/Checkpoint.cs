@@ -1,18 +1,17 @@
 using UnityEngine;
 
-public class Hazard : MonoBehaviour
+public class Checkpoint : MonoBehaviour
 {
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
         {
-            // INCORRECT WAY: SceneManager.LoadScene(...) <- Delete this line if you see it!
-
-            // CORRECT WAY: Tell the player to teleport
+            // Update the player's respawn position
             PlayerController player = collision.GetComponent<PlayerController>();
             if (player != null)
             {
-                player.Respawn();
+                player.SetCheckpoint(transform.position);
+                GetComponent<SpriteRenderer>().color = Color.green; // Visual feedback
             }
         }
     }
