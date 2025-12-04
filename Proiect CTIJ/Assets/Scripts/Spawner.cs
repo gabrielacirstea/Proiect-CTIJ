@@ -2,48 +2,40 @@ using UnityEngine;
 
 public class SpikeSpawner : MonoBehaviour
 {
-    [Header("Settings")]
+    [Header("Prefabs")]
     public GameObject spikePrefab;
+    public GameObject checkpointPrefab; // NEW: Slot for the checkpoint
+
+    [Header("Level Settings")]
     public float levelLength = 50f;
     public float startX = 5f;
 
     [Header("Difficulty / Spacing")]
-    // The smallest gap between spikes (Must be big enough for player to land)
     public float minGap = 2.0f; 
-    // The largest gap (Keep it reasonable so the level isn't empty)
     public float maxGap = 5.0f; 
 
     [Header("Vertical Positions")]
-    public float groundY = 0.788f; // Your specific floor value
-    public float ceilingY = 4.21f; // Your specific ceiling value
+    public float groundY = 0.788f; 
+    public float ceilingY = 4.21f; 
 
     void Start()
     {
-        GeneratePlayableLevel();
+        GenerateLevel();
+        SpawnCheckpoints(); // NEW: Call the function to spawn checkpoints
     }
 
-    void GeneratePlayableLevel()
+    void GenerateLevel()
     {
-        // Start generating at the safe start position
         float currentX = startX;
 
-        // Keep adding spikes until we reach the end of the level
         while (currentX < levelLength)
         {
-            // 1. Calculate the Gap
-            // We add a random distance to our current position to find the NEXT spike spot.
-            // This guarantees spikes never overlap and always have space between them.
             float gap = Random.Range(minGap, maxGap);
             currentX += gap;
 
-            // If we went past the end of the level, stop spawning
             if (currentX >= levelLength) break;
 
-            // 2. Decide: Floor or Ceiling?
-            // 50/50 chance
             bool isCeiling = Random.value > 0.5f;
-
-            // 3. Spawn the Spike
             SpawnSpike(currentX, isCeiling);
         }
     }
@@ -56,14 +48,30 @@ public class SpikeSpawner : MonoBehaviour
         if (onCeiling)
         {
             position = new Vector3(xPos, ceilingY, 0);
-            rotation = Quaternion.Euler(0, 0, 180); // Point down
+            rotation = Quaternion.Euler(0, 0, 180); 
         }
         else
         {
             position = new Vector3(xPos, groundY, 0);
-            rotation = Quaternion.identity; // Point up
+            rotation = Quaternion.identity; 
         }
 
         Instantiate(spikePrefab, position, rotation);
+    }
+
+    // --- NEW FUNCTION TO PLACE CHECKPOINTS ---
+    void SpawnCheckpoints()
+    {
+        if (checkpointPrefab == null) return;
+
+        // Calculate positions
+        float firstThird = levelLength / 3f;
+        float secondThird = (levelLength / 3f) * 2;
+
+        // Spawn Checkpoint 1
+        Instantiate(checkpointPrefab, new Vector3(firstThird, groundY, 0), Quaternion.identity);
+
+        // Spawn Checkpoint 2
+        Instantiate(checkpointPrefab, new Vector3(secondThird, groundY, 0), Quaternion.identity);
     }
 }
