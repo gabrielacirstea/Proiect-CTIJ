@@ -6,6 +6,13 @@ public class PlayerController : MonoBehaviour
     public float moveSpeed = 5f;
     public float jumpForce = 8f; 
     public int maxJumps = 2; 
+    
+    [Header("Difficulty Progression")] // --- NEW SECTION ---
+    public float acceleration = 0.5f; // How much speed to add per second
+    public float maxSpeed = 12f;      // The speed limit (so it doesn't get impossible)
+    private float startingSpeed;      // Remembers your original speed
+
+    // Internal variables
     private int jumpCount;   
     private Rigidbody2D rb;
     private bool isGrounded;
@@ -16,13 +23,25 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         respawnPosition = transform.position;
         jumpCount = 0;
+        
+        // --- NEW: Remember the speed we started with ---
+        startingSpeed = moveSpeed;
     }
 
     void Update()
     {
+        // --- NEW: Increase speed over time ---
+        // We use Time.deltaTime so the increase is smooth (per second), not per frame
+        if (moveSpeed < maxSpeed)
+        {
+            moveSpeed += acceleration * Time.deltaTime;
+        }
+
+        // 1. HORIZONTAL MOVEMENT
         float moveInput = Input.GetAxisRaw("Horizontal");
         rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
 
+        // 2. JUMP
         if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
         {
             if (jumpCount < maxJumps)
@@ -34,6 +53,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        // 3. GRAVITY FLIP
         if (Input.GetKeyDown(KeyCode.LeftShift) && isGrounded)
         {
             rb.gravityScale *= -1;
@@ -53,6 +73,10 @@ public class PlayerController : MonoBehaviour
     {
         transform.position = respawnPosition;
         rb.linearVelocity = Vector2.zero;
+        
+        // --- NEW: Reset speed to normal when dying ---
+        moveSpeed = startingSpeed;
+
         if (rb.gravityScale < 0)
         {
             rb.gravityScale *= -1;

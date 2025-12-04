@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement; // Needed to know which level we are in
 
 public class Checkpoint : MonoBehaviour
 {
@@ -6,12 +7,22 @@ public class Checkpoint : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            // Update the player's respawn position
             PlayerController player = collision.GetComponent<PlayerController>();
             if (player != null)
             {
+                // 1. Tell player to set respawn point (your old code)
                 player.SetCheckpoint(transform.position);
-                GetComponent<SpriteRenderer>().color = Color.green; // Visual feedback
+                
+                // 2. NEW: Save the current Level Index to the disk
+                int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+                PlayerPrefs.SetInt("SavedLevel", currentSceneIndex);
+                PlayerPrefs.Save();
+                
+                Debug.Log("Game Saved at Level Index: " + currentSceneIndex);
+
+                // Visual feedback
+                GetComponent<SpriteRenderer>().color = Color.green;
+                GetComponent<Collider2D>().enabled = false; // Disable so we don't save twice
             }
         }
     }
