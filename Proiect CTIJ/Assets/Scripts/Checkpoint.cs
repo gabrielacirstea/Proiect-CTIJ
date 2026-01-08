@@ -18,6 +18,12 @@ public class Checkpoint : MonoBehaviour
                 PlayerPrefs.SetInt("SavedLevel", currentSceneIndex);
                 PlayerPrefs.Save();
                 
+                // 3. Save coin progress at checkpoint
+                if (CoinProgress.Instance != null)
+                {
+                    CoinProgress.Instance.SaveCheckpoint();
+                }
+                
                 Debug.Log("Game Saved at Level Index: " + currentSceneIndex);
 
                 // Visual feedback

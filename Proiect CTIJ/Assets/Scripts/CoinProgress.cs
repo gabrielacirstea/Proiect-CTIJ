@@ -7,11 +7,14 @@ public class CoinProgress : MonoBehaviour
 
     [Header("UI")]
     public Slider progressBar;
+    public GameObject levelCompletePanel;
 
     [Header("Progress Settings")]
-    public int targetCoins = 50;
+    public int targetCoins = 10;
 
     private int coinsCollected = 0;
+    private int checkpointCoins = 0;
+    private bool levelCompleted = false;
 
     private void Awake()
     {
@@ -31,21 +34,46 @@ public class CoinProgress : MonoBehaviour
             progressBar.maxValue = targetCoins;
             progressBar.value = 0;
         }
+        
+        if (levelCompletePanel != null)
+            levelCompletePanel.SetActive(false);
     }
 
     public void AddCoin(int amount)
     {
+        if (levelCompleted)
+            return;
+            
         coinsCollected += amount;
 
         if (progressBar != null)
             progressBar.value = coinsCollected;
+            
+        // Check if level is completed
+        if (coinsCollected >= targetCoins)
+        {
+            CompleteLevel();
+        }
+    }
+    
+    private void CompleteLevel()
+    {
+        levelCompleted = true;
+        Time.timeScale = 0f; // Pause the game
+        
+        if (levelCompletePanel != null)
+            levelCompletePanel.SetActive(true);
     }
 
     public void ResetProgress()
-{
-    coinsCollected = 0;
-    if (progressBar != null)
-        progressBar.value = 0;
-}
+    {
+        coinsCollected = checkpointCoins;
+        if (progressBar != null)
+            progressBar.value = checkpointCoins;
+    }
 
+    public void SaveCheckpoint()
+    {
+        checkpointCoins = coinsCollected;
+    }
 }

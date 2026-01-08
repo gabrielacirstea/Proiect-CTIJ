@@ -2,11 +2,14 @@ using UnityEngine;
 
 public class PlayerDeath : MonoBehaviour
 {
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        if (collision.collider.CompareTag("Spike"))
+        if (other.CompareTag("Spike"))
         {
-            CoinProgress.Instance.ResetProgress();
+            if (CoinProgress.Instance != null)
+            {
+                CoinProgress.Instance.ResetProgress();
+            }
         }
     }
 }
