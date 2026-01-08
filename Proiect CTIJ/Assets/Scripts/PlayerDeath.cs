@@ -6,9 +6,16 @@ public class PlayerDeath : MonoBehaviour
     {
         if (other.CompareTag("Spike"))
         {
-            if (CoinProgress.Instance != null)
+            var player = GetComponent<PlayerController>();
+            if (player != null)
             {
-                CoinProgress.Instance.ResetProgress();
+                // Spikes bypass lives: immediate respawn + coin reset
+                player.TakeHit(bypassLives: true);
+                Debug.Log("✓ Spike hit! Instant reset to checkpoint.");
+            }
+            else
+            {
+                Debug.LogWarning("⚠ Player has no PlayerController component!");
             }
         }
     }

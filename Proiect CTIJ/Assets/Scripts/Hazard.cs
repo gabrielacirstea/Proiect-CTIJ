@@ -6,13 +6,15 @@ public class Hazard : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            // INCORRECT WAY: SceneManager.LoadScene(...) <- Delete this line if you see it!
+            // Ignore spikes here; spikes are handled by PlayerDeath for instant reset
+            if (CompareTag("Spike"))
+                return;
 
-            // CORRECT WAY: Tell the player to teleport
             PlayerController player = collision.GetComponent<PlayerController>();
             if (player != null)
             {
-                player.Respawn();
+                // Obstacles (red rectangles) consume a life; on zero, respawn & reset coins.
+                player.TakeHit(bypassLives: false);
             }
         }
     }

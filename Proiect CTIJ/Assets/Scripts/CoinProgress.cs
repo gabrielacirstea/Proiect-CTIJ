@@ -18,11 +18,7 @@ public class CoinProgress : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
+        // Allow one instance per scene (no persistence across scenes)
         Instance = this;
     }
 

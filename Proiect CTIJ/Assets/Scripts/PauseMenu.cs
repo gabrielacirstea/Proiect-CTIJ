@@ -13,6 +13,11 @@ public class PauseMenu : MonoBehaviour
 
     private bool isPaused = false;
 
+    private void Awake()
+    {
+        DontDestroyOnLoad(gameObject); // Persist across scenes
+    }
+
     private void Start()
     {
         // Make sure pause menu is hidden at start

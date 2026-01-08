@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -11,6 +12,15 @@ public class PlayerController : MonoBehaviour
     public float acceleration = 0.5f; // How much speed to add per second
     public float maxSpeed = 12f;      // The speed limit (so it doesn't get impossible)
     private float startingSpeed;      // Remembers your original speed
+
+    [Header("Controls")]
+    public bool allowManualGravityFlip = true; // Disable in Level 3
+
+    [Header("Lives")]
+    public int maxLives = 3;
+    [SerializeField] private int currentLives;
+    [Tooltip("Optional: assign 3 UI Images (dots) to visualize lives.")]
+    public Image[] lifeDots;
 
     // Internal variables
     private int jumpCount;   
@@ -26,6 +36,10 @@ public class PlayerController : MonoBehaviour
         
         // --- NEW: Remember the speed we started with ---
         startingSpeed = moveSpeed;
+
+        // Init lives
+        currentLives = maxLives;
+        UpdateLivesUI();
     }
 
     void Update()
@@ -54,7 +68,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // 3. GRAVITY FLIP
-        if (Input.GetKeyDown(KeyCode.LeftShift) && isGrounded)
+        if (allowManualGravityFlip && Input.GetKeyDown(KeyCode.LeftShift) && isGrounded)
         {
             rb.gravityScale *= -1;
             Vector3 newScale = transform.localScale;
@@ -83,6 +97,56 @@ public class PlayerController : MonoBehaviour
             Vector3 newScale = transform.localScale;
             newScale.y *= -1;
             transform.localScale = newScale;
+        }
+
+        // Reset speed to starting value after death
+        moveSpeed = startingSpeed;
+
+        // Reset coin progress to checkpoint amount if available
+        if (CoinProgress.Instance != null)
+        {
+            CoinProgress.Instance.ResetProgress();
+        }
+    }
+
+    public void TakeHit(bool bypassLives = false)
+    {
+        if (bypassLives)
+        {
+            Respawn();
+            UpdateLivesUI();
+            return;
+        }
+
+        currentLives = Mathf.Max(0, currentLives - 1);
+        UpdateLivesUI();
+
+        if (currentLives <= 0)
+        {
+            currentLives = maxLives; // reset lives after death
+            Respawn();
+            UpdateLivesUI();
+        }
+    }
+
+    public void RefillLives()
+    {
+        currentLives = maxLives;
+        UpdateLivesUI();
+    }
+
+    public void ResetJumps()
+    {
+        jumpCount = 0;
+    }
+
+    private void UpdateLivesUI()
+    {
+        if (lifeDots == null) return;
+        for (int i = 0; i < lifeDots.Length; i++)
+        {
+            if (lifeDots[i] != null)
+                lifeDots[i].enabled = i < currentLives;
         }
     }
 
