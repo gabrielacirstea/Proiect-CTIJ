@@ -15,7 +15,6 @@ public class AudioManager : MonoBehaviour
 
     private void Awake()
     {
-        // Singleton pattern
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -23,7 +22,6 @@ public class AudioManager : MonoBehaviour
         }
         Instance = this;
 
-        // Load audio clips from Resources
         coinClip = Resources.Load<AudioClip>("audio/coin");
         impactClip = Resources.Load<AudioClip>("audio/impact");
         levelClip = Resources.Load<AudioClip>("audio/level");
