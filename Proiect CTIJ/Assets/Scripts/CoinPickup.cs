@@ -6,6 +6,10 @@ public class CoinPickup : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            // Play coin collection sound
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlayCoinSound();
+            
             CoinProgress.Instance.AddCoin(1);
             Destroy(gameObject);
         }

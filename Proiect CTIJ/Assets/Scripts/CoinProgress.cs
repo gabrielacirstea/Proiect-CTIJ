@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class CoinProgress : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class CoinProgress : MonoBehaviour
     [Header("UI")]
     public Slider progressBar;
     public GameObject levelCompletePanel;
+    public TextMeshProUGUI coinCounterText;
 
     [Header("Progress Settings")]
     public int targetCoins = 10;
@@ -33,6 +35,9 @@ public class CoinProgress : MonoBehaviour
         
         if (levelCompletePanel != null)
             levelCompletePanel.SetActive(false);
+        
+        // Initialize coin counter display
+        UpdateCoinCounterDisplay();
     }
 
     public void AddCoin(int amount)
@@ -44,11 +49,21 @@ public class CoinProgress : MonoBehaviour
 
         if (progressBar != null)
             progressBar.value = coinsCollected;
+        
+        UpdateCoinCounterDisplay();
             
         // Check if level is completed
         if (coinsCollected >= targetCoins)
         {
             CompleteLevel();
+        }
+    }
+    
+    private void UpdateCoinCounterDisplay()
+    {
+        if (coinCounterText != null)
+        {
+            coinCounterText.text = $"Energy: {coinsCollected}/{targetCoins}";
         }
     }
     
@@ -66,6 +81,7 @@ public class CoinProgress : MonoBehaviour
         coinsCollected = checkpointCoins;
         if (progressBar != null)
             progressBar.value = checkpointCoins;
+        UpdateCoinCounterDisplay();
     }
 
     public void SaveCheckpoint()
@@ -73,3 +89,4 @@ public class CoinProgress : MonoBehaviour
         checkpointCoins = coinsCollected;
     }
 }
+

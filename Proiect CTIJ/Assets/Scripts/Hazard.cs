@@ -13,6 +13,10 @@ public class Hazard : MonoBehaviour
             PlayerController player = collision.GetComponent<PlayerController>();
             if (player != null)
             {
+                // Play damage sound
+                if (AudioManager.Instance != null)
+                    AudioManager.Instance.PlayDamageSound();
+                
                 // Obstacles (red rectangles) consume a life; on zero, respawn & reset coins.
                 player.TakeHit(bypassLives: false);
             }
