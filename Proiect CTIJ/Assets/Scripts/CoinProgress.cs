@@ -20,7 +20,6 @@ public class CoinProgress : MonoBehaviour
 
     private void Awake()
     {
-        // Allow one instance per scene (no persistence across scenes)
         Instance = this;
     }
 
@@ -36,7 +35,6 @@ public class CoinProgress : MonoBehaviour
         if (levelCompletePanel != null)
             levelCompletePanel.SetActive(false);
         
-        // Initialize coin counter display
         UpdateCoinCounterDisplay();
     }
 
@@ -52,7 +50,6 @@ public class CoinProgress : MonoBehaviour
         
         UpdateCoinCounterDisplay();
             
-        // Check if level is completed
         if (coinsCollected >= targetCoins)
         {
             CompleteLevel();
@@ -70,7 +67,7 @@ public class CoinProgress : MonoBehaviour
     private void CompleteLevel()
     {
         levelCompleted = true;
-        Time.timeScale = 0f; // Pause the game
+        Time.timeScale = 0f;
         
         if (levelCompletePanel != null)
             levelCompletePanel.SetActive(true);

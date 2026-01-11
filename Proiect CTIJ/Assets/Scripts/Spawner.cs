@@ -61,17 +61,14 @@ public class SpikeSpawner : MonoBehaviour
             rotation = Quaternion.identity;
         }
 
-        // Spawn spike
         Instantiate(spikePrefab, position, rotation);
 
-        // Count spikes
         spikeCount++;
 
-        // Spawn checkpoint after every N spikes
         if (checkpointPrefab != null && spikeCount % spikesPerCheckpoint == 0)
         {
             Vector3 checkpointPos = new Vector3(
-                xPos + 2f,    // puțin DUPĂ spike
+                xPos + 2f,
                 groundY,
                 0
             );

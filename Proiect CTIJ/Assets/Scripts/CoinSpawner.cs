@@ -11,7 +11,7 @@ public class CoinSpawner : MonoBehaviour
     [Header("Spawn Settings")]
     public float spawnAheadDistance = 20f;
     public float spawnInterval = 1f;
-    public float margin = 0.5f;   // distanță față de bare
+    public float margin = 0.5f;
     [Range(0f, 1f)]
     public float spawnChance = 0.6f;
 

@@ -6,17 +6,17 @@ public class ObstacleSpawner : MonoBehaviour
     public GameObject obstaclePrefab;
 
     [Header("Spawn Area (Y only)")]
-    public float minSpawnY = -3f; // fallback if bounds not set
-    public float maxSpawnY = 3f;  // fallback if bounds not set
-    public Transform bottomBound; // optional: set to lower black bar transform
-    public Transform topBound;    // optional: set to upper black bar transform
+    public float minSpawnY = -3f;
+    public float maxSpawnY = 3f;
+    public Transform bottomBound;
+    public Transform topBound;
 
     [Header("Spawn Timing")]
-    public float spawnInterval = 1.2f; // seconds between spawns
+    public float spawnInterval = 1.2f;
 
     [Header("Spawn Position (X)")]
-    public bool useSpawnerX = true; // if true, spawn at this GameObject's X
-    public float fixedSpawnX = 15f; // else, use this X value
+    public bool useSpawnerX = true;
+    public float fixedSpawnX = 15f;
     
     private float spawnTimer = 0f;
 
@@ -41,7 +41,6 @@ public class ObstacleSpawner : MonoBehaviour
         float minY = minSpawnY;
         float maxY = maxSpawnY;
 
-        // If bounds are provided, use their Y positions (with small padding)
         if (bottomBound != null && topBound != null)
         {
             minY = Mathf.Min(bottomBound.position.y, topBound.position.y) + 0.2f;

@@ -3,8 +3,8 @@ using UnityEngine;
 public class GravityInverter : MonoBehaviour
 {
     [Header("Auto Invert Settings")]
-    public float invertInterval = 5f; // Invert gravity every 5 seconds
-    public bool autoInvert = true;    // Enable/disable auto invert for this scene
+    public float invertInterval = 5f;
+    public bool autoInvert = true;
 
     private float invertTimer = 0f;
     private PlayerController playerController;
@@ -38,15 +38,12 @@ public class GravityInverter : MonoBehaviour
     {
         if (rb == null || playerController == null) return;
 
-        // Flip gravity
         rb.gravityScale *= -1;
 
-        // Flip sprite/player visual
         Vector3 newScale = transform.localScale;
         newScale.y *= -1;
         transform.localScale = newScale;
 
-        // Reset jumps so player can jump after flip
         playerController.ResetJumps();
 
         Debug.Log("✓ Gravity inverted! Timer reset.");
